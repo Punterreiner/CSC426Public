@@ -109,9 +109,14 @@ public class Scanner {
             addToken(match('=') ? GREATER_EQUAL : GREATER);
             break;
         case '(':
+            if (match('*')){
+                while(peek() != '*' && peekNext() != ')' && !isAtEnd()) advance();
+            }
             // TODO add support for comments surrounded by (* and *),
             // (* and optionally allow them to nest (* like this *) *)
-            addToken(LEFT_PAREN);
+            else{
+                addToken(LEFT_PAREN);
+            }
             break;
 
         case ' ':
@@ -153,6 +158,13 @@ public class Scanner {
         // and exponents on the real literals
         while (isDigit(peek()))
             advance();
+        
+        if (peek() == '.' && isDigit(peekNext())) {
+            advance();
+    
+            while (isDigit(peek())) advance();
+            addToken(NUMBER, Double.parseDouble(source.substring(start, current)));
+        }
         addToken(NUMBER, Integer.valueOf(source.substring(start, current)));
     }
 

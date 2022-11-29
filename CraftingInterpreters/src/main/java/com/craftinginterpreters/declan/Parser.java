@@ -204,6 +204,8 @@ public class Parser {
         if (match(IF))
             return ifStatement();
         // TODO add support fot the WHILE and REPEAT statements
+        if (match(WHILE))
+            return whileStatement();
         if (match(FOR))
             return forStatement();
         if (match(IDENTIFIER)) {
@@ -220,6 +222,18 @@ public class Parser {
         return new Stmt.Empty(peek());
     }
 
+    private Stmt whileStatement(){
+        List<Case> cases = new ArrayList<>();
+        cases.add(doCase());
+
+        while (match(ELSIF)){
+            cases.add(doCase());
+        }
+        
+        consume(END, "Expected 'END'.");
+        return new Stmt.While(cases);
+    }
+    
     private Stmt ifStatement() {
         Token head = previous();
         List<Case> cases = new ArrayList<>();
